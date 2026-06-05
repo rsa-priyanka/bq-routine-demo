@@ -1,5 +1,5 @@
 CREATE OR REPLACE PROCEDURE
-`bq-routine-demo.demo_dataset.hello_world`()
+`bq-routine-demo.demo_dataset.hi`()
 BEGIN
 
   SELECT 'Hello from GitHub Actions';

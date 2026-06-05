@@ -25,6 +25,15 @@ jobs:
         run: |
           for file in routines/procedures/*.sql
           do
+            if [ ! -s "$file" ]; then
+              echo "Skipping empty file $file"
+              continue
+            fi
+
             echo "Deploying $file"
-            bq query --use_legacy_sql=false < "$file"
+
+            bq query \
+              --use_legacy_sql=false \
+              --format=none \
+              "$(cat "$file")"
           done

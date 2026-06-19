@@ -1,5 +1,5 @@
 CREATE OR REPLACE PROCEDURE
-`bq-routine-prod.prod_dataset2.testnew`()
+`bq-routine-prod.prod_dataset.testnew`()
 BEGIN
 
   SELECT 'Hello from GitHub Actions from rsa again';

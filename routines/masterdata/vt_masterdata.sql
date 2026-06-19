@@ -3,5 +3,6 @@ CREATE OR REPLACE PROCEDURE
 BEGIN
 
   SELECT 'Hello from GitHub Actions from the masterdata';
+  SELECT 'Debdut Hira was here!';
 
 END;

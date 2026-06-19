@@ -1,5 +1,5 @@
 CREATE OR REPLACE PROCEDURE
-`bq-routine-prod.basket.vt_coupon`()
+`bq-routine-prod.couponTransaction.vt_coupon`()
 BEGIN
 
   SELECT 'Hello from GitHub Actions from the coupon team';

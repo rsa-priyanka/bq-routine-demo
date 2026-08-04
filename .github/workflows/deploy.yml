@@ -28,18 +28,27 @@ jobs:
  
       - name: Deploy changed routines
         run: |
-          # Get list of changed SQL files
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'routines/**/*.sql')
-         
+          # Get only Added (A) and Modified (M) SQL fil
+          CHANGED_FILES=$(git diff --diff-filter=AM --name-only HEAD~1 HEAD -- 'routines/**/*.sql')
+
           if [ -z "$CHANGED_FILES" ]; then
-            echo "No routine files changed."
+            echo "No new or modified routine files found."
             exit 0
           fi
-         
+
           for FILE in $CHANGED_FILES; do
+
+            # Skip if file doesn't exist (extra safety)
+            if [ ! -f "$FILE" ]; then
+              echo "Skipping missing file: $FILE"
+              continue
+            fi
+
             echo "Deploying: $FILE"
+
             bq query \
               --project_id=${{ secrets.GCP_PROJECT_ID }} \
               --use_legacy_sql=false \
               < "$FILE"
+
           done

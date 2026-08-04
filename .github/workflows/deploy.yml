@@ -1,45 +1,54 @@
 # .github/workflows/deploy-prod.yml
 name: Deploy BigQuery Routines
- 
+
 on:
   push:
     branches:
       - main
     paths:
-      - 'routines/**'   # Only trigger when routine files change
- 
+      - 'routines/**'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Needed to detect changed files
- 
+          fetch-depth: 2
+
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY_2 }}
- 
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
- 
+
       - name: Deploy changed routines
         run: |
-          # Get list of changed SQL files
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'routines/**/*.sql')
-         
+          # Get only Added (A) and Modified (M) SQL files
+          CHANGED_FILES=$(git diff --diff-filter=AM --name-only HEAD~1 HEAD -- 'routines/**/*.sql')
+
           if [ -z "$CHANGED_FILES" ]; then
-            echo "No routine files changed."
+            echo "No new or modified routine files found."
             exit 0
           fi
-         
+
           for FILE in $CHANGED_FILES; do
+
+            # Skip if file doesn't exist (extra safety)
+            if [ ! -f "$FILE" ]; then
+              echo "Skipping missing file: $FILE"
+              continue
+            fi
+
             echo "Deploying: $FILE"
+
             bq query \
               --project_id=${{ secrets.GCP_PROJECT_ID }} \
               --use_legacy_sql=false \
               < "$FILE"
+
           done
